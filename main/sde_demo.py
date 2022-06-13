@@ -10,8 +10,8 @@ from sympy import init_printing, sympify
 import matplotlib.animation as animation
 from rich import print
 
-from main.sde_model_coindy import SDEModel
-from main.sde_simulator_coindy import SDESimulator
+from main.sde_model import SDEModel
+from main.sde_simulator import SDESimulator
 
 matplotlib.use('QtAgg')
 
