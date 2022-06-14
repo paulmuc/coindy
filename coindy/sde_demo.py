@@ -6,12 +6,11 @@ Created on 4 avr. 2021
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-from sympy import init_printing, sympify
 import matplotlib.animation as animation
 from rich import print
 
-from main.sde_model import SDEModel
-from main.sde_simulator import SDESimulator
+from coindy.sde_model import SDEModel
+from coindy.sde_simulator import SDESimulator
 
 matplotlib.use('QtAgg')
 
@@ -32,14 +31,19 @@ def update_lines(num, data_p, traces_p, max_num_points_p):
 
 
 if __name__ == '__main__':
-    init_printing()
 
     n_dof = 2
     n_rvs = 2
 
-    const_map = {sympify("m"): 1, sympify("M"): 50, sympify("L"): 0.2022,
-                 sympify("Cx"): 2.5, sympify("ch_x"): 0.7658 * (0.8 * 0.2022) ** 2,
-                 sympify("Kx"): 2500, sympify("g"): 9.81, sympify("s0"): 1, sympify("s1"): 0}
+    constant_map = {"m": 1,
+                    "M": 20,
+                    "L": 0.2022,
+                    "Cx": 2.5,
+                    "ch_x": 0.7658 * (0.8 * 0.2022) ** 2,
+                    "Kx": 2500,
+                    "g": 9.81,
+                    "s0": 1,
+                    "s1": 0}
 
     M_str = [["m+M", "m*L*cos(x2)"], ["m*L*cos(x2)", "m*L**2"]]
     C_str = [["Cx", "-sin(x2)*x3"], ["0", "ch_x*cos(x2)**2"]]
@@ -49,19 +53,17 @@ if __name__ == '__main__':
     SDEModel.show_progress = True
     sde_model = SDEModel(n_dof, n_rvs)
 
-    sde_model.equations = {'M': M_str, 'C': C_str, 'K': K_str, 'F': F_str}
+    sde_model.equations = {'M': M_str, 'C': C_str, 'K': K_str, 'f': F_str}
 
     sde_model.compute_ito_sde_terms()
 
-    a, B, L0a, L0b, Lja, Ljb, L1L1b = sde_model.sde_terms.values()
-
     initial_values = {'x0': 0, 'x1': 0, 'x2': 0, 'x3': 0}
     dt = 0.01
-    T = 10
+    T = 30
     Nt = int(T / dt)
 
     SDESimulator.show_progress = True
-    sde_sim = SDESimulator(sde_model, [dt, T], const_map, initial_values)
+    sde_sim = SDESimulator(sde_model, [dt, T], constant_map, initial_values)
 
     sde_sim.simulate()
 

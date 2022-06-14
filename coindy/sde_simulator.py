@@ -7,7 +7,7 @@ import numpy as np
 import sympy as sym
 from PyQt5.QtCore import pyqtSlot
 
-from simulation_utilities import const_substitution, generate_wiener_increment
+from simulation_utils import constant_substitution, generate_wiener_increment
 from progress_worker import ProgressWorker
 from console_output import progress_bar
 
@@ -96,49 +96,37 @@ class SDESimulator(ProgressWorker):
 
     @pyqtSlot()
     def simulate(self):
+
         self._results.clear()
-        if not isinstance(list(self.constants.keys())[0], sym.Symbol):
-            buff = list(self.constants.keys())
-            for symbol in buff:
-                self.constants[sym.sympify(symbol)] = self.constants.pop(symbol)
-            del buff
+
         terms = self.sde_model.sde_terms
         x = self.sde_model.states
         t = self.sde_model.t
         n_dof = self.sde_model.n_dof
 
-        a, B, L0a, L0b, Lja, Ljb, L1L1b = terms.values()
-
         update_variables = x + (t,)
-        a = const_substitution(a, update_variables, self.constants)
-        B = const_substitution(B, update_variables, self.constants)
-        L0a = const_substitution(L0a, update_variables, self.constants)
-        L0b = const_substitution(L0b, update_variables, self.constants)
-        Lja = const_substitution(Lja, update_variables, self.constants)
-        Ljb = const_substitution(Ljb, update_variables, self.constants)
-        L1L1b = const_substitution(L1L1b, update_variables, self.constants)
 
-        a = sym.lambdify(update_variables, a.transpose())
-        B = sym.lambdify(update_variables, B)
-        L0a = sym.lambdify(update_variables, L0a.transpose())
-        L0b = sym.lambdify(update_variables, L0b.transpose())
-        Lja = sym.lambdify(update_variables, Lja)
-        Ljb = sym.lambdify(update_variables, Ljb)
-        L1L1b = sym.lambdify(update_variables, L1L1b)
+        lambda_terms = {}
 
-        terms_struct = {'a': a,
-                        'B': B,
-                        'L0a': L0a,
-                        'L0b': L0b,
-                        'Lja': Lja,
-                        'Ljb': Ljb,
-                        'L1L1b': L1L1b}
+        for key, term in terms.items():
+            # Substitute constants into equations
+            terms[key] = constant_substitution(term, update_variables, self.constants)
+
+            # Lambdify the terms for use in recursive sim
+            if key == 'a' or key == 'L0a' or key == 'L0b':
+                # Transpose if term is a vector
+                term_to_lambdify = terms[key].transpose()
+            else:
+                term_to_lambdify = terms[key]
+
+            lambda_terms[key] = sym.lambdify(update_variables, term_to_lambdify)
+
 
         # Simulation
         # Stochastic increment terms
         dt = self.time[0]
         T = self.time[1]
-        dw = generate_wiener_increment((0, dt, T), n_dof)
+        dw = generate_wiener_increment(dt, T, n_dof)
         Nt = int(T / dt)
         t_vector = np.linspace(0, T, num=Nt)
         X = np.zeros((2 * n_dof, Nt))
@@ -152,27 +140,22 @@ class SDESimulator(ProgressWorker):
         self.computing_map['Y'][0] = Y
         self.computing_map['Z'][0] = Z
 
-        if not self.check_signals(25):
-            return
+        progress = self.check_progress(0, 25, 'Computing simulation...')
 
-        print("Computing simulation...")
         for n in range(0, Nt - 1):
 
             sub_dw = dw[:, :, n]
 
-            if n % round(Nt * 0.025) == 0:
-                if not self.check_signals(75 * (n + 1) / Nt + 25):
-                    return
+            if n % int(Nt * 0.025) == 0:
 
-                if self.__class__.show_progress:
-                    progress_bar(75 * (n + 1) / Nt + 25, 100)
+                progress = self.check_progress(progress, 75 * 0.025)
 
             # technique holds the data as to which processing algorithm to use with which data matrix and flag
             for technique in self.computing_map:
                 if self.computing_map[technique][2]:
 
                     # Processing using either Euler-Maruyama 0.5, Milstein 1.0 or Ito-Taylor 1.5
-                    output = self.computing_map[technique][1](terms_struct, self.computing_map[technique][0][:, n], dt,
+                    output = self.computing_map[technique][1](lambda_terms, self.computing_map[technique][0][:, n], dt,
                                                               t_vector[n], n_dof, sub_dw)
                     if isinstance(output, Exception):
                         self.computing_map[technique][2] = False
@@ -181,15 +164,24 @@ class SDESimulator(ProgressWorker):
 
         self._results = [t_vector, np.concatenate((X, Y, Z)),
                          [self.computing_map['X'][2], self.computing_map['Y'][2], self.computing_map['Z'][2]]]
-        if not self.check_signals(100):
-            return
-
-        if self.__class__.show_progress:
-            progress_bar(100, 100)
-            print("\r")
 
         self.finished.emit()
 
     @property
     def results(self):
         return *self._results,
+
+    @property
+    def constants(self):
+        return self._constants
+
+    @constants.setter
+    def constants(self, constants):
+        self._constants = {}
+        if not isinstance(list(constants.keys())[0], sym.Symbol):
+            buff = list(constants.keys())
+            for symbol in buff:
+                self._constants[sym.sympify(symbol)] = constants.pop(symbol)
+            del buff
+        else:
+            self._constants = constants

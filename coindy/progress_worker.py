@@ -1,5 +1,7 @@
 from PyQt5.QtCore import QObject, pyqtSignal
 
+from coindy.console_output import progress_bar
+
 
 class ProgressWorker(QObject):
     show_progress = False
@@ -21,3 +23,13 @@ class ProgressWorker(QObject):
             return False
         else:
             return True
+
+    def check_progress(self, progress, increment, message=""):
+        if not self.check_signals(progress):
+            return
+        progress = progress + increment
+        if self.__class__.show_progress:
+            if not message == '':
+                print(message, end="\n")
+            progress_bar(progress, 100)
+        return progress
