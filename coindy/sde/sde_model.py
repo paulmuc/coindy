@@ -3,19 +3,24 @@ Created on 8 Apr 2021
 
 @author: Paul Mucchielli
 """
-import collections
 
 from PyQt5.QtCore import pyqtSlot
 import sympy as sym
 
-import progress_worker
-import matrix_utils as mu
-import ito_utils as it
+from coindy.base_classes import progress_worker
+from coindy.utils import matrix_utils as mu, ito_utils as it
 
 
 class SDEModel(progress_worker.ProgressWorker):
 
     def __init__(self, n_dof, n_rvs, parent=None):
+        """
+
+        :param n_dof:
+        :param n_rvs:
+        :param parent:
+        """
+        # TODO : Finish documentation
         super(SDEModel, self).__init__()
         self.parent = parent
         self.n_dof = n_dof
@@ -31,7 +36,6 @@ class SDEModel(progress_worker.ProgressWorker):
         self.variables = {'x': self._states, 't': self._t}
         self._constants = []
         self._latex_equations = {}
-        self.computing_steps = [[it.ito_sde_form, self._equations]]
 
     @pyqtSlot()
     def compute_ito_sde_terms(self):

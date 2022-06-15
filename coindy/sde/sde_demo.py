@@ -3,16 +3,13 @@ Created on 4 avr. 2021
 
 @author: Paul Mucchielli
 """
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.animation as animation
 from rich import print
 
-from coindy.sde_model import SDEModel
-from coindy.sde_simulator import SDESimulator
-
-matplotlib.use('Qt5Agg')
+from coindy.sde.sde_model import SDEModel
+from coindy.sde.sde_simulator import SDESimulator
 
 
 def update_lines(num, data_p, traces_p, max_num_points_p):
@@ -35,6 +32,7 @@ if __name__ == '__main__':
     n_dof = 2
     n_rvs = 2
 
+    # Create a dict of constants in you equations
     constant_map = {"m": 1,
                     "M": 20,
                     "L": 0.2022,
@@ -45,28 +43,41 @@ if __name__ == '__main__':
                     "s0": 1,
                     "s1": 0}
 
+    # Write equations in a string format, if it is a matrix, it can be written as a 2D matrix in the form of nested
+    # lists
     M_str = [["m+M", "m*L*cos(x2)"], ["m*L*cos(x2)", "m*L**2"]]
     C_str = [["Cx", "-sin(x2)*x3"], ["0", "ch_x*cos(x2)**2"]]
     K_str = [["Kx", "0"], ["0", "0"]]
     F_str = [["0", "0", "s0", "0"], ["-m*L*g*sin(x2)", "0", "0", "s1"]]
 
+    # Activate progress printing in console
     SDEModel.show_progress = True
+
+    # Create SDEModel instance with number of degrees of freedom and number of random variables (Wiener processes)
     sde_model = SDEModel(n_dof, n_rvs)
 
+    # Set the SDEModel equations
     sde_model.equations = {'M': M_str, 'C': C_str, 'K': K_str, 'f': F_str}
 
+    # Compute the Ito SDE terms
     sde_model.compute_ito_sde_terms()
 
+    # Set initial values for state variables (e.g. at time = 0)
     initial_values = {'x0': 0, 'x1': 0, 'x2': 0, 'x3': 0}
     dt = 0.01
     T = 30
     Nt = int(T / dt)
 
+    # Activate progress printing in console
     SDESimulator.show_progress = True
+
+    # Create SDESimulator instance
     sde_sim = SDESimulator(sde_model, [dt, T], constant_map, initial_values)
 
+    # Simulate the system
     sde_sim.simulate()
 
+    # Extract simulation results
     time, Y, flags = sde_sim.results
 
     techniques_list = ['Euler-Maruyama', 'Milstein', 'It\u014d-Taylor 1.5']

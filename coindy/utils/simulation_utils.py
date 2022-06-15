@@ -7,7 +7,7 @@ Created on 6 avr. 2021
 import numpy as np
 import sympy as sym
 
-from matrix_utils import remove_vars
+from coindy.utils.matrix_utils import remove_vars
 
 
 def generate_wiener_increment(time_step: float, time_stop: int, n_dof: int) -> np.ndarray:

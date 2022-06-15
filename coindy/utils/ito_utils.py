@@ -136,6 +136,14 @@ def LJ(X, B, x, j: int):
 
 
 def LJ_total(X, B, x):
+    """
+
+    :param X:
+    :param B:
+    :param x:
+    :return:
+    """
+    # TODO: Finish documentation
     n_dof = len(x)
     n_rvs = B.shape[1]
     x_dim = X.shape[1]
@@ -150,6 +158,13 @@ def LJ_total(X, B, x):
 
 
 def L1L1_total(B, x):
+    """
+
+    :param B:
+    :param x:
+    :return:
+    """
+    # TODO: Finish documentation
     n_dof = len(x)
     n_rvs = B.shape[1]
     l1l1 = sym.zeros(n_dof, n_rvs)

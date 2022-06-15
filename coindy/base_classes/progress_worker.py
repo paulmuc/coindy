@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from coindy.console_output import progress_bar
+from coindy.utils.console_utils import progress_bar
 
 
 class ProgressWorker(QObject):

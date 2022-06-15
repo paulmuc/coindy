@@ -7,9 +7,8 @@ import numpy as np
 import sympy as sym
 from PyQt5.QtCore import pyqtSlot
 
-from simulation_utils import constant_substitution, generate_wiener_increment
-from progress_worker import ProgressWorker
-from console_output import progress_bar
+from coindy.utils.simulation_utils import constant_substitution, generate_wiener_increment
+from coindy.base_classes.progress_worker import ProgressWorker
 
 
 def euler_maruyama_iteration(terms_struct, X, dt, t, n_dof, sub_dW):

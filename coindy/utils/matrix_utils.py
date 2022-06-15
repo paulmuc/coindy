@@ -6,7 +6,7 @@ Created on 6 avr. 2021
 import sympy as sym
 
 
-def ismember(to_find, to_search):
+def is_member(to_find, to_search):
     """ Returns True if "to_find" is found in "to_search"
 
     :param to_search: item to be searched
@@ -91,7 +91,7 @@ def remove_vars(variables: set, vars_to_remove):
     """
     remove_vars_list = set()
     for var in variables:
-        if ismember(var, vars_to_remove):
+        if is_member(var, vars_to_remove):
             remove_vars_list.add(var)
     variables -= remove_vars_list
     return variables
