@@ -1,7 +1,7 @@
 """
 Created on 4 avr. 2021
 
-@author: Paul
+@author: Paul Mucchielli
 """
 import matplotlib
 import matplotlib.pyplot as plt
@@ -12,7 +12,7 @@ from rich import print
 from coindy.sde_model import SDEModel
 from coindy.sde_simulator import SDESimulator
 
-matplotlib.use('QtAgg')
+matplotlib.use('Qt5Agg')
 
 
 def update_lines(num, data_p, traces_p, max_num_points_p):
