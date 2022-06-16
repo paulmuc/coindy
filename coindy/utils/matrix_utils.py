@@ -1,8 +1,3 @@
-"""
-Created on 6 avr. 2021
-
-@author: Paul Mucchielli
-"""
 import sympy as sym
 
 
@@ -21,10 +16,11 @@ def is_member(to_find, to_search):
         if elt not in bind:
             bind[elt] = i
     try:
-        isin = [bind.get(itm, None) for itm in to_find]
+        is_in = [bind.get(itm, None) for itm in to_find]
+        is_in = is_in[0]
     except TypeError:
-        isin = bind.get(to_find, None)
-    return isin is not None
+        is_in = bind.get(to_find, None)
+    return is_in is not None
 
 
 # def make_diagonal(vector):
@@ -97,12 +93,18 @@ def remove_vars(variables: set, vars_to_remove):
     return variables
 
 
-def augment_vector(vector, n_dof: int):
-    """ Augments a vector to 2*n_dof
+def augment_vector(vector: sym.Matrix, n_dof: int):
+    """ Augments a vector to n_dof
     :param vector:
     :param n_dof: Number of initial degrees of freedom
     :return:
     """
+    if min(vector.shape) != 1:
+        raise ValueError('First argument must be a vector')
+
+    if n_dof % max(vector.shape) != 0 or n_dof == 0:
+        raise ValueError('Second argument must be a multiple of the greatest dimension of the input vector')
+
     augmented_vec = sym.zeros(n_dof, 1)
     for i in range(1, n_dof, 2):
         augmented_vec[i] = vector[int((i - 1) / 2)]

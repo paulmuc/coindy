@@ -1,15 +1,10 @@
-"""
-Created on 4 avr. 2021
-
-@author: Paul Mucchielli
-"""
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.animation as animation
 from rich import print
 
-from coindy.sde.sde_model import SDEModel
-from coindy.sde.sde_simulator import SDESimulator
+from coindy import SDEModel
+from coindy import SDESimulator
 
 
 def update_lines(num, data_p, traces_p, max_num_points_p):
@@ -28,13 +23,18 @@ def update_lines(num, data_p, traces_p, max_num_points_p):
 
 
 if __name__ == '__main__':
-
+    """
+    This script demonstrates the use of SDEModel and SDESimulator to help compute a simulation of a given structural 
+    system under random excitation using stochastic calculus techniques. 
+    Here the example is a cart and pendulum system where a 2D pendulum is attached to a rolling cart. 
+    All motion occurs with the y-z plane.
+    """
     n_dof = 2
     n_rvs = 2
 
     # Create a dict of constants in you equations
     constant_map = {"m": 1,
-                    "M": 20,
+                    "M": 50,
                     "L": 0.2022,
                     "Cx": 2.5,
                     "ch_x": 0.7658 * (0.8 * 0.2022) ** 2,
@@ -43,12 +43,29 @@ if __name__ == '__main__':
                     "s0": 1,
                     "s1": 0}
 
+    # Equations in MCK format (structural systems) ---------------------------------------------------------------------
     # Write equations in a string format, if it is a matrix, it can be written as a 2D matrix in the form of nested
     # lists
     M_str = [["m+M", "m*L*cos(x2)"], ["m*L*cos(x2)", "m*L**2"]]
     C_str = [["Cx", "-sin(x2)*x3"], ["0", "ch_x*cos(x2)**2"]]
     K_str = [["Kx", "0"], ["0", "0"]]
-    F_str = [["0", "0", "s0", "0"], ["-m*L*g*sin(x2)", "0", "0", "s1"]]
+    # Note that f has dimension n_dof x 2 + n_rvs. The first column of f_str is the system forcing (which sometimes,
+    # due to nonlinearity, can't be formulated in the MCK format). The second column account for external deterministic
+    # forcing (for example a sinusoidal excitation) and the last n_rvs columns are for the stochastic forcing matrix B
+    f_str = [["0", "0", "s0", "0"], ["-m*L*g*sin(x2)", "0", "0", "s1"]]
+
+    # Uncomment for SDE format -----------------------------------------------------------------------------------------
+    # a_str = [["x1"],
+    #          ["(L*g*m*sin(x2)*cos(x2) + L*(-Cx*x1 - Kx*x0 + x3**2*sin(x2)) + ch_x*x3*cos(x2)**3)/(L*(M + m*sin("
+    #              "x2)**2))"],
+    #          ["x3"],
+    #          ["(L*m*(Cx*x1 + Kx*x0 - x3**2*sin(x2))*cos(x2) - (M + m)*(L*g*m*sin(x2) + ch_x*x3*cos(x2)**2))/(L**2*m*(M "
+    #           "+ m*sin(x2)**2))"]]
+    #
+    # B_str = [["0", "0"],
+    #          ["s0/(M + m*sin(x2)**2)", "-s1*cos(x2)/(L*(M + m*sin(x2)**2))"],
+    #          ["0", "0"],
+    #          ["-s0*cos(x2)/(L*(M + m*sin(x2)**2))", "s1*(M + m)/(L**2*m*(M + m*sin(x2)**2))"]]
 
     # Activate progress printing in console
     SDEModel.show_progress = True
@@ -57,7 +74,8 @@ if __name__ == '__main__':
     sde_model = SDEModel(n_dof, n_rvs)
 
     # Set the SDEModel equations
-    sde_model.equations = {'M': M_str, 'C': C_str, 'K': K_str, 'f': F_str}
+    # sde_model.equations = {'a': a_str, 'B': B_str}
+    sde_model.equations = {'M': M_str, 'C': C_str, 'K': K_str, 'f': f_str}
 
     # Compute the Ito SDE terms
     sde_model.compute_ito_sde_terms()
@@ -78,6 +96,8 @@ if __name__ == '__main__':
     sde_sim.simulate()
 
     # Extract simulation results
+    # Some simulations may fail, in which case the flag in flags corresponding to the simulation technique
+    # (Euler-Maruyama, Milstein or Ito-Taylor 1.5) will be set to False
     time, Y, flags = sde_sim.results
 
     techniques_list = ['Euler-Maruyama', 'Milstein', 'It\u014d-Taylor 1.5']
@@ -86,9 +106,9 @@ if __name__ == '__main__':
             outcome = ' failed\n'
         else:
             outcome = ' succeeded\n'
-        print(f'[magenta]'+techniques_list[i]+'[/magenta]' + outcome)
+        print(f'[magenta]' + techniques_list[i] + '[/magenta]' + outcome)
 
-    Y = Y[8:]  # Selecting only IT 1.5 results
+    Y = Y[8:]  # Selecting only Ito-Taylor 1.5 results
 
     L = 0.2022
     px = L * np.sin(Y[2, :])

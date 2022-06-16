@@ -1,35 +1,33 @@
-from PyQt5.QtCore import QObject, pyqtSignal
-
-from coindy.utils.console_utils import progress_bar
-
-
-class ProgressWorker(QObject):
+class ProgressWorker:
+    """
+    Base class for computing classes like SDEModel and SDESimulator
+    """
     show_progress = False
-    progress = pyqtSignal(float)
-    finished = pyqtSignal()
-    stopped = pyqtSignal()
-
-    def __init__(self):
-        super(ProgressWorker, self).__init__()
-        self._cancel_requested = False
-
-    def stop(self):
-        self._cancel_requested = True
-
-    def check_signals(self, index):
-        self.progress.emit(index)
-        if self._cancel_requested:
-            self.stopped.emit()
-            return False
-        else:
-            return True
 
     def check_progress(self, progress, increment, message=""):
-        if not self.check_signals(progress):
-            return
+        """ Updates the progress display of each instance of ProgressWorker
+
+        :param progress: Progress as a float between 0-100
+        :param increment: Increment to increase the progress by
+        :param message: Optional message to write before the update
+        :return: Updated progress
+        """
         progress = progress + increment
         if self.__class__.show_progress:
             if not message == '':
                 print(message, end="\n")
             progress_bar(progress, 100)
         return progress
+
+
+def progress_bar(progress: float, total: float):
+    """ Prints a command line progress bar
+    :param progress: Float indicating the progress with respect to total progress
+    :param total: Float indicating the total progress
+    """
+    percent = 100 * (progress / float(total))
+    bar = '█' * int(percent) + '-' * (100 - int(percent))
+    if int(percent) == 100:
+        print(f"\r|{bar}| {percent:.2f}%", end="\n\n")
+    else:
+        print(f"\r|{bar}| {percent:.2f}%", end="\r")

@@ -1,10 +1,5 @@
-"""
-Created on 6 avr. 2021
-
-@author: Paul Mucchielli
-"""
-
 import sympy as sym
+import numpy as np
 
 
 def ito_sde_form(x, M, C, K, f, B_init):

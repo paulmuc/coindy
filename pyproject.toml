@@ -1,0 +1,36 @@
+# pyproject.toml
+
+[build-system]
+requires      = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "coindy"
+version = "1.0.0"
+description = "A library for computing simulations of stochastic differential equations"
+readme = "README.md"
+authors = [{ name = "Paul Mucchielli", email = "paulmucc@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["SDE", "stochastic differential equations", "nonlinear dynamics"]
+dependencies = [
+        'matplotlib>=3.4.2',
+        'numpy>=1.20.2',
+        'rich>=12.4.4',
+        'sympy>=1.8',
+    'tomli; python_version < "3.11"',
+]
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.urls]
+Homepage = "https://github.com/coindy"
+
+[project.scripts]
+coindy = "coindy.__main__:main"
