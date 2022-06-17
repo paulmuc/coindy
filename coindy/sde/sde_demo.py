@@ -3,8 +3,7 @@ import numpy as np
 import matplotlib.animation as animation
 from rich import print
 
-from coindy import SDEModel
-from coindy import SDESimulator
+from coindy.sde import SDEModel
 
 
 def update_lines(num, data_p, traces_p, max_num_points_p):
@@ -87,29 +86,22 @@ if __name__ == '__main__':
     T = 30
     Nt = int(T / dt)
 
-    # Activate progress printing in console
-    SDESimulator.show_progress = True
-
-    # Create SDESimulator instance
-    sde_sim = SDESimulator(sde_model, [dt, T], constant_map, initial_values, algorithm='all')
-
-    # Simulate the system
-    sde_sim.simulate()
+    sde_model.simulate([dt, T], constant_map, initial_values)
 
     # Extract simulation results
     # Some simulations may fail, in which case the flag in flags corresponding to the simulation technique
     # (Euler-Maruyama, Milstein or Ito-Taylor 1.5) will be set to False
-    results = sde_sim.results
+    results = sde_model.results
 
     flags = results['failed_flags']
 
-    techniques_list = ['Euler-Maruyama', 'Milstein', 'It\u014d-Taylor 1.5']
-    for i in range(0, len(flags)):
-        if flags[i] == 0:
+    techniques = {'em': 'Euler-Maruyama', 'mi': 'Milstein', 'it': 'It\u014d-Taylor 1.5'}
+    for key, value in flags.items():
+        if value == 0:
             outcome = ' failed\n'
         else:
             outcome = ' succeeded\n'
-        print(f'[magenta]' + techniques_list[i] + '[/magenta]' + outcome)
+        print(f'[magenta]' + techniques[key] + '[/magenta]' + outcome)
 
     Y = results['it']  # Selecting only Ito-Taylor 1.5 results
 

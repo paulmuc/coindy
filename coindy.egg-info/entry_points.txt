@@ -1,0 +1,2 @@
+[console_scripts]
+coindy = coindy.__main__:main

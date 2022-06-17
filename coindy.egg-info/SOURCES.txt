@@ -2,9 +2,11 @@ LICENSE
 pyproject.toml
 setup.py
 coindy/__init__.py
+coindy/__main__.py
 coindy.egg-info/PKG-INFO
 coindy.egg-info/SOURCES.txt
 coindy.egg-info/dependency_links.txt
+coindy.egg-info/entry_points.txt
 coindy.egg-info/requires.txt
 coindy.egg-info/top_level.txt
 coindy/base_classes/__init__.py

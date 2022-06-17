@@ -2,7 +2,7 @@ from .utils import ito_utils, matrix_utils, simulation_utils
 
 from .base_classes import ProgressWorker
 
-from .sde import SDEModel, SDESimulator
+from .sde import SDEModel, sde_demo
 
 __version__ = "0.0"
 
@@ -11,4 +11,7 @@ __all__ = [
     'ito_utils', 'matrix_utils', 'simulation_utils',
 
     # Classes
-    'ProgressWorker', 'SDEModel', 'SDESimulator']
+    'ProgressWorker', 'SDEModel',
+
+    # Scripts
+    'sde_demo']

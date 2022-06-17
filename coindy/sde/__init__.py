@@ -1,3 +1,3 @@
-from .sde_classes import SDESimulator, SDEModel
+from .sde_classes import SDEModel
 
-__all__ = ['SDEModel', 'SDESimulator']
+__all__ = ['SDEModel', 'sde_demo']
