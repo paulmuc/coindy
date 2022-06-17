@@ -53,9 +53,10 @@ def dX(X, x):
     """
 
     n = X.shape[0]
-    dx = sym.zeros(n)
+    m = len(x)
+    dx = sym.zeros(n, m)
     for i in range(0, n):
-        for j in range(0, n):
+        for j in range(0, m):
             dx[i, j] = sym.diff(X[i], x[j])
     return sym.simplify(dx)
 
@@ -113,7 +114,7 @@ def L0(X, a, B, x, t: sym.Symbol):
 
 def LJ(X, B, x, j: int):
     """First derivation of the second Kolmogorov operator.
-        Derives the result of applying the first Kolmogorov operator to X.
+        Derives the result of applying the first Kolmogorov operator to X to the jth column of B.
     :param X: Vector of symbolic expressions
     :param B: Diffusion matrix
     :param x: State vector
@@ -131,14 +132,13 @@ def LJ(X, B, x, j: int):
 
 
 def LJ_total(X, B, x):
+    """First derivation of the second Kolmogorov operator.
+        Derives the result of applying the first Kolmogorov operator to X for every column of B
+    :param X: Vector of symbolic expressions
+    :param B: Diffusion matrix
+    :param x: State vector
+    :return: Vector of symbolic expressions
     """
-
-    :param X:
-    :param B:
-    :param x:
-    :return:
-    """
-    # TODO: Finish documentation
     n_dof = len(x)
     n_rvs = B.shape[1]
     x_dim = X.shape[1]
@@ -152,17 +152,17 @@ def LJ_total(X, B, x):
     return lj
 
 
-def L1L1_total(B, x):
-    """
+def L1L1_total(X, x):
+    """Double application of the LJ operator to matrix B (this is the last term of the It\u014d-Taylor
+    update
 
-    :param B:
-    :param x:
-    :return:
+    :param X: Matrix
+    :param x: State vector
+    :return: Matrix of symbolic expressions
     """
-    # TODO: Finish documentation
     n_dof = len(x)
-    n_rvs = B.shape[1]
+    n_rvs = X.shape[1]
     l1l1 = sym.zeros(n_dof, n_rvs)
     for i in range(0, n_rvs):
-        l1l1[:, i] = LJ(LJ(B[:, i], B, x, i), B, x, i)
+        l1l1[:, i] = LJ(LJ(X[:, i], X, x, i), X, x, i)
     return l1l1

@@ -29,19 +29,20 @@ if __name__ == '__main__':
     Here the example is a cart and pendulum system where a 2D pendulum is attached to a rolling cart. 
     All motion occurs with the y-z plane.
     """
-    n_dof = 2
-    n_rvs = 2
+    n_dof = 2  # Number of degrees of freedom
+    n_rvs = 2  # Number of random variables
 
     # Create a dict of constants in you equations
-    constant_map = {"m": 1,
-                    "M": 50,
-                    "L": 0.2022,
-                    "Cx": 2.5,
-                    "ch_x": 0.7658 * (0.8 * 0.2022) ** 2,
-                    "Kx": 2500,
-                    "g": 9.81,
-                    "s0": 1,
-                    "s1": 0}
+    constant_map = {"m": 1,  # Mass of the pendulum ball
+                    "M": 50,  # Mass of the cart
+                    "L": 0.2022,  # Length of the pendulum rod
+                    "Cx": 2.5,  # Damping of the cart
+                    "ch_x": 0.7658 * (0.8 * 0.2022) ** 2,  # ch_x = c*h^2 where c is the damping of an auxiliary damper
+                    # attached at the pendulum and h is 0.8*L (the point of attachment of the damper)
+                    "Kx": 2500,  # Stiffness of the cart
+                    "g": 9.81,  # Acceleration due to gravity
+                    "s0": 1,  # Magnitude of noise (1st degree of freedom i.e. the cart displacement)
+                    "s1": 0}  # Magnitude of noise (2nd degree of freedom i.e. the pendulum angle)
 
     # Equations in MCK format (structural systems) ---------------------------------------------------------------------
     # Write equations in a string format, if it is a matrix, it can be written as a 2D matrix in the form of nested
@@ -90,7 +91,7 @@ if __name__ == '__main__':
     SDESimulator.show_progress = True
 
     # Create SDESimulator instance
-    sde_sim = SDESimulator(sde_model, [dt, T], constant_map, initial_values)
+    sde_sim = SDESimulator(sde_model, [dt, T], constant_map, initial_values, algorithm='all')
 
     # Simulate the system
     sde_sim.simulate()
@@ -98,7 +99,9 @@ if __name__ == '__main__':
     # Extract simulation results
     # Some simulations may fail, in which case the flag in flags corresponding to the simulation technique
     # (Euler-Maruyama, Milstein or Ito-Taylor 1.5) will be set to False
-    time, Y, flags = sde_sim.results
+    results = sde_sim.results
+
+    flags = results['failed_flags']
 
     techniques_list = ['Euler-Maruyama', 'Milstein', 'It\u014d-Taylor 1.5']
     for i in range(0, len(flags)):
@@ -108,7 +111,7 @@ if __name__ == '__main__':
             outcome = ' succeeded\n'
         print(f'[magenta]' + techniques_list[i] + '[/magenta]' + outcome)
 
-    Y = Y[8:]  # Selecting only Ito-Taylor 1.5 results
+    Y = results['it']  # Selecting only Ito-Taylor 1.5 results
 
     L = 0.2022
     px = L * np.sin(Y[2, :])

@@ -1,3 +1,5 @@
+from typing import Union
+
 import numpy as np
 import sympy as sym
 
@@ -182,23 +184,32 @@ class SDEModel(ProgressWorker):
 
 class SDESimulator(ProgressWorker):
 
-    def __init__(self, sde_model: SDEModel, time: list, constants: dict, initial_values: dict):
+    def __init__(self, sde_model: SDEModel, time: list, constants: dict, initial_values: dict, algorithm='all'):
         u"""Constructor for SDESimulator
 
         :param sde_model: SDEModel containing the It\u014d-Taylor terms as computed by compute_ito_sde_terms()
         :param time: list with 2 entries where the first is the sampling period and the second the total time of integration.
         :param constants: Dictionary of constants and corresponding values
         :param initial_values: Dictionary of constants and corresponding values
+        :param algorithm: String or list indicating which integration technique to use
         """
         super(SDESimulator, self).__init__()
+        self._algorithms = None
         self.sde_model = sde_model
-        self.computing_map = {'X': [[], su.euler_maruyama_iteration, True],
-                              'Y': [[], su.milstein_iteration, True],
-                              'Z': [[], su.ito_taylor_iteration, True]}
+        self.computing_map = {'em':
+                                  {'function': su.euler_maruyama_iteration, 'failed_flag': True,
+                                   'compute_flag': False},
+                              'mi':
+                                  {'function': su.milstein_iteration, 'failed_flag': True,
+                                   'compute_flag': False},
+                              'it':
+                                  {'function': su.ito_taylor_iteration, 'failed_flag': True,
+                                   'compute_flag': False}}
         self._results = []
         self.time = time
         self.constants = constants
         self.initial_values = initial_values
+        self.algorithm = algorithm
 
     def simulate(self):
         """Performs a simulation of a system under random excitation using the data contained in self.sde_model
@@ -235,16 +246,15 @@ class SDESimulator(ProgressWorker):
         dw = su.generate_wiener_increment(dt, T, n_dof)
         Nt = int(T / dt)
         t_vector = np.linspace(0, T, num=Nt)
-        X = np.zeros((2 * n_dof, Nt))
-        X[:, 0] = np.array(list(self.initial_values.values()))
-        Y = np.zeros((2 * n_dof, Nt))
-        Y[:, 0] = np.array(list(self.initial_values.values()))
-        Z = np.zeros((2 * n_dof, Nt))
-        Z[:, 0] = np.array(list(self.initial_values.values()))
 
-        self.computing_map['X'][0] = X
-        self.computing_map['Y'][0] = Y
-        self.computing_map['Z'][0] = Z
+        self._results = {'time': t_vector}
+        # Initialization of data arrays
+        for technique in self.computing_map:
+            if self.computing_map[technique]['compute_flag']:
+                self.computing_map[technique]['data'] = np.zeros((2 * n_dof, Nt))
+                self.computing_map[technique]['data'][:, 0] = np.array(list(self.initial_values.values()))
+                # Enter the appropriate data pointer into the results
+                self._results[technique] = self.computing_map[technique]['data']
 
         progress = self.check_progress(0, 25, 'Computing simulation...')
 
@@ -257,22 +267,24 @@ class SDESimulator(ProgressWorker):
 
             # technique holds the data as to which processing algorithm to use with which data matrix and flag
             for technique in self.computing_map:
-                if self.computing_map[technique][2]:
+                if self.computing_map[technique]['failed_flag'] and self.computing_map[technique]['compute_flag']:
 
                     # Processing using either Euler-Maruyama 0.5, Milstein 1.0 or Ito-Taylor 1.5
-                    output = self.computing_map[technique][1](lambda_terms, self.computing_map[technique][0][:, n], dt,
-                                                              t_vector[n], n_dof, sub_dw)
+                    output = self.computing_map[technique]['function'](lambda_terms,
+                                                                       self.computing_map[technique]['data'][:, n], dt,
+                                                                       t_vector[n], n_dof, sub_dw)
                     if isinstance(output, Exception):
-                        self.computing_map[technique][2] = False
+                        self.computing_map[technique]['failed_flag'] = False
                     else:
-                        self.computing_map[technique][0][:, n + 1] = output
+                        self.computing_map[technique]['data'][:, n + 1] = output
 
-        self._results = [t_vector, np.concatenate((X, Y, Z)),
-                         [self.computing_map['X'][2], self.computing_map['Y'][2], self.computing_map['Z'][2]]]
+            # Add failed_flags (False if corresponding technique has failed
+            self._results['failed_flags'] = [self.computing_map[technique]['failed_flag'] for technique in
+                                             self.computing_map.keys() if self.computing_map[technique]['compute_flag']]
 
     @property
     def results(self):
-        return *self._results,
+        return self._results
 
     @property
     def constants(self):
@@ -292,3 +304,29 @@ class SDESimulator(ProgressWorker):
             del buff
         else:
             self._constants = constants
+
+    @property
+    def algorithm(self):
+        return self._algorithm
+
+    @algorithm.setter
+    def algorithm(self, algorithm: Union[list[str], str]):
+        # Validation of inputs
+        if isinstance(algorithm, list):
+            for technique in algorithm:
+                if technique in self.computing_map:
+                    self.computing_map[technique]['compute_flag'] = True
+                else:
+                    raise KeyError('Wrong key used, only "em", "mi" or "it" are allowed')
+        elif isinstance(algorithm, str):
+            if algorithm in ['em', 'mi', 'it', 'all']:
+                if algorithm == 'all':
+                    for technique in self.computing_map:
+                        self.computing_map[technique]['compute_flag'] = True
+                else:
+                    self.computing_map[algorithm]['compute_flag'] = True
+            else:
+                raise KeyError('Wrong key used, only "em", "mi", "it" or "all" are allowed')
+        else:
+            raise TypeError('The input must be a list of strings or a string')
+        self._algorithm = algorithm

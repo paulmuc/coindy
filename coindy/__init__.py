@@ -4,7 +4,7 @@ from .base_classes import ProgressWorker
 
 from .sde import SDEModel, SDESimulator
 
-__version__ = "1.0"
+__version__ = "0.0"
 
 __all__ = [
     # Sub-packages
