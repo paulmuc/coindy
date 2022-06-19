@@ -80,7 +80,7 @@ def euler_maruyama_iteration(terms: dict, X, dt: float, t: float, n_dof: int, su
             return error
 
 
-def milstein_iteration(terms, X, dt, t, n_dof, sub_dW):
+def milstein_iteration(terms: dict, X, dt: float, t: float, n_dof: int, sub_dW):
     """ Performs a Milstein update
 
     This function can be used in a recursive manner to compute an update of the It\u014d-Taylor terms contained in
