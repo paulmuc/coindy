@@ -53,7 +53,7 @@ and stochastic force amplitude 0.01 N. The initial conditions are ``x0 = 0.01, x
 ```
 
 ## References
- - Kloeden, P. E., Platen, E. and Schurz, H. (2003) Numerical Solution of SDE Through Computer Experiments. Berlin, Heidelberg: Springer Berlin Heidelberg (Universitext). doi: 10.1007/978-3-642-57913-4.
- - Kloeden, P. E. and Platen, E. (1992) Numerical Solution of Stochastic Differential Equations, Springer. Berlin, Heidelberg: Springer Berlin Heidelberg. doi: 10.1007/978-3-662-12616-5.
- - Roy, D. and Visweswara Rao, G. (2017) Stochastic dynamics, filtering and optimization, Stochastic Dynamics, Filtering and Optimization. doi: 10.1017/9781316863107.
- - Cyganowski, S., Kloeden, P. and Ombach, J. (2002) From Elementary Probability to Stochastic Differential Equations with MAPLE®. Berlin, Heidelberg: Springer Berlin Heidelberg (Universitext). doi: 10.1007/978-3-642-56144-3.
+ - Kloeden, P. E., Platen, E. and Schurz, H. (2003) [*Numerical Solution of SDE Through Computer Experiments*](https://doi.org/10.1007/978-3-642-57913-4). Berlin, Heidelberg: Springer Berlin Heidelberg (Universitext).
+ - Kloeden, P. E. and Platen, E. (1992) [*Numerical Solution of Stochastic Differential Equations*](https://doi.org/10.1007/978-3-662-12616-5), Springer. Berlin, Heidelberg: Springer Berlin Heidelberg.
+ - Roy, D. and Visweswara Rao, G. (2017) [*Stochastic dynamics, filtering and optimization, Stochastic Dynamics, Filtering and Optimization*](https://doi.org/10.1017/9781316863107).
+ - Cyganowski, S., Kloeden, P. and Ombach, J. (2002) [*From Elementary Probability to Stochastic Differential Equations with MAPLE®*](https://doi.org/10.1007/978-3-642-56144-3). Berlin, Heidelberg: Springer Berlin Heidelberg (Universitext).
