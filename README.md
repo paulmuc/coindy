@@ -15,7 +15,7 @@ It is for now supported on Python 3.9.
 
 ## Classes
 
-`SDEModel(n_dof, n_rvs, algorithm='all')` - Main class, which performs the computation of derivative terms need for explicit integration schemes. A use case is demonstrated in coindy.sde_demo.py
+`SDEModel(n_dof, n_rvs, algorithm='all')` - Main class, which performs the computation of derivative terms need for explicit integration schemes. A use case is demonstrated in `coindy.sde_demo.py`.
 
 ## Utility functions
 
