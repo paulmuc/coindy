@@ -4,6 +4,7 @@ import matplotlib.animation as animation
 from rich import print
 
 from coindy.sde import SDEModel
+from coindy.utils.console_utils import display_matrix
 
 
 def update_lines(num, data_p, traces_p, max_num_points_p):
@@ -21,9 +22,9 @@ def update_lines(num, data_p, traces_p, max_num_points_p):
     return traces_p
 
 
-if __name__ == '__main__':
+def example():
     """
-    This script demonstrates the use of SDEModel and SDESimulator to help compute a simulation of a given structural 
+    This script demonstrates the use of SDEModel to help compute a simulation of a given structural 
     system under random excitation using stochastic calculus techniques. 
     Here the example is a cart and pendulum system where a 2D pendulum is attached to a rolling cart. 
     All motion occurs with the y-z plane.
@@ -54,6 +55,10 @@ if __name__ == '__main__':
     # forcing (for example a sinusoidal excitation) and the last n_rvs columns are for the stochastic forcing matrix B
     f_str = [["0", "0", "s0", "0"], ["-m*L*g*sin(x2)", "0", "0", "s1"]]
 
+    print('Displaying the initial mass term using [magenta][italic]display_matrix[/italic][/magenta] function')
+    print('M = ', end='')
+    display_matrix(M_str)
+
     # Uncomment for SDE format -----------------------------------------------------------------------------------------
     # a_str = [["x1"],
     #          ["(L*g*m*sin(x2)*cos(x2) + L*(-Cx*x1 - Kx*x0 + x3**2*sin(x2)) + ch_x*x3*cos(x2)**3)/(L*(M + m*sin("
@@ -74,11 +79,16 @@ if __name__ == '__main__':
     sde_model = SDEModel(n_dof, n_rvs)
 
     # Set the SDEModel equations
-    # sde_model.equations = {'a': a_str, 'B': B_str}
+    # sde_model.equations = {'a': a_str, 'B': B_str} # Uncomment for SDE format
     sde_model.equations = {'M': M_str, 'C': C_str, 'K': K_str, 'f': f_str}
 
     # Compute the Ito SDE terms
     sde_model.compute_ito_sde_terms()
+
+    # Example of displaying a matrix
+    print('Displaying the processed drift term using [magenta][italic]display_matrix[/italic][/magenta] function')
+    print('[yellow]The script and simulation will resume after the window is closed[/yellow]')
+    display_matrix(sde_model.sde_terms['a'], 'a')
 
     # Set initial values for state variables (e.g. at time = 0)
     initial_values = {'x0': 0, 'x1': 0, 'x2': 0, 'x3': 0}
@@ -90,7 +100,7 @@ if __name__ == '__main__':
 
     # Extract simulation results
     # Some simulations may fail, in which case the flag in flags corresponding to the simulation technique
-    # (Euler-Maruyama, Milstein or Ito-Taylor 1.5) will be set to False
+    # (Euler-Maruyama ('em'), Milstein ('mi') or Ito-Taylor 1.5 ('it')) will be set to False
     results = sde_model.results
 
     flags = results['failed_flags']

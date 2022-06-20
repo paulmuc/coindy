@@ -1,11 +1,13 @@
 from typing import Union
 
+import collections
 import numpy as np
 import sympy as sym
 
 from coindy import ProgressWorker
 from coindy import matrix_utils as mu, ito_utils as it, simulation_utils as su
 
+__all__ = ['SDEModel', 'ModelError']
 
 class SDEModel(ProgressWorker):
 
@@ -218,9 +220,12 @@ class SDEModel(ProgressWorker):
     def algorithm(self, algorithm: Union[list[str], str]):
         # Validation of inputs
         if isinstance(algorithm, list):
-            for technique in algorithm:
-                if technique not in SDESimulator.computing_map:
-                    raise KeyError('Wrong key used, only "em", "mi" or "it" are allowed')
+            if collections.Counter(algorithm) == collections.Counter(SDESimulator.computing_map):
+                algorithm = 'all'
+            else:
+                for technique in algorithm:
+                    if technique not in SDESimulator.computing_map:
+                        raise KeyError('Wrong key used, only "em", "mi" or "it" are allowed')
         elif isinstance(algorithm, str):
             if algorithm not in ['em', 'mi', 'it', 'all']:
                 raise KeyError('Wrong key used, only "em", "mi", "it" or "all" are allowed')

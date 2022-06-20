@@ -1,7 +1,7 @@
 Metadata-Version: 2.1
 Name: coindy
-Version: 0.0.0
-Summary: A library for computing simulations of stochastic differential equations
+Version: 0.0.2
+Summary: A library for computing simulations of stochastic differential equations in symbolic form
 Author-email: Paul Mucchielli <paulmucc@gmail.com>
 License:            GNU GENERAL PUBLIC LICENSE
                                Version 3, 29 June 2007
@@ -696,12 +696,34 @@ License:            GNU GENERAL PUBLIC LICENSE
         Bash
         GIMP
         
-Project-URL: Homepage, https://github.com/coindy
+Project-URL: Homepage, https://github.com/paulmuc/coindy
 Keywords: SDE,stochastic differential equations,nonlinear dynamics
-Classifier: License :: OSI Approved :: MIT License
 Classifier: Programming Language :: Python
 Classifier: Programming Language :: Python :: 3
+Classifier: Development Status :: 1 - Planning
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Scientific/Engineering
 Requires-Python: >=3.9
 Description-Content-Type: text/markdown
 Provides-Extra: dev
 License-File: LICENSE
+
+# CoinDy - Stochastic Differential Equations
+
+CoinDy is a package allowing the symbolic computation of Stochastic Differential Equations and their simulation for mechanical as well as Itō systems.
+
+Build Status: Passed
+
+## Installation
+
+You can install CoinDy library from [PyPI](https://pypi.org/project/realpython-reader/):
+
+    python -m pip install coindy
+
+It is for now supported on Python 3.9.
+
+## How to use
+
+You can find a demo script named sde_demo.py in coindy. It describes the basic use of the main class called SDEModel.
