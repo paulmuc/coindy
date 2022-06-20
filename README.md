@@ -1,6 +1,7 @@
 # CoinDy - Stochastic Differential Equations
 
 CoinDy is a package allowing the symbolic computation of Stochastic Differential Equations and their simulation for mechanical as well as Itō systems.
+This package can help in deriving the complex derivative terms needed to apply explicit algorithms such as the ones described by Kloeden and Platen. It can also be used as a teaching tool, to confirm hand-derived formulas or to obtain quick results.
 
 Build Status: Passed
 
