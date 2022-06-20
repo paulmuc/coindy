@@ -9,7 +9,7 @@ Build Status: Passed
 
 CoinDy is not live yet, it is available on TestPyPI though
 
-    pip install -i https://test.pypi.org/simple/ coindy
+    pip install -i https://test.pypi.org/pypi/ --extra-index-url https://pypi.org/simple coindy
 
 It is for now supported on Python 3.9.
 
@@ -19,7 +19,11 @@ It is for now supported on Python 3.9.
 
 ## Utility functions
 
-`generate_wiener_increment(time_step, time_stop, n_dof)` - Utility that generates a n_dof * (time_stop/time_step) matrix of Wiener increments)
+`generate_wiener_increment(time_step, time_stop, n_dof)` - Utility that generates a n_dof * (time_stop/time_step) matrix of Wiener increments
+
+## Scripts
+
+`sde_demo.py` - Script demonstrating the use of SDEModel for derivation and simulation of Itо̄ SDEs.
 
 ## Example:
 Integrate a one-dimensional mechanical oscillator with mass 1kg, damping 2.5 N s/m, stiffness 5 N/m
@@ -47,3 +51,9 @@ and stochastic force amplitude 0.01 N. The initial conditions are ``x0 = 0.01, x
 
     sde_model.simulate([0.01, 10], constant_map, initial_values)
 ```
+
+## References
+ - Kloeden, P. E., Platen, E. and Schurz, H. (2003) Numerical Solution of SDE Through Computer Experiments. Berlin, Heidelberg: Springer Berlin Heidelberg (Universitext). doi: 10.1007/978-3-642-57913-4.
+ - Kloeden, P. E. and Platen, E. (1992) Numerical Solution of Stochastic Differential Equations, Springer. Berlin, Heidelberg: Springer Berlin Heidelberg. doi: 10.1007/978-3-662-12616-5.
+ - Roy, D. and Visweswara Rao, G. (2017) Stochastic dynamics, filtering and optimization, Stochastic Dynamics, Filtering and Optimization. doi: 10.1017/9781316863107.
+ - Cyganowski, S., Kloeden, P. and Ombach, J. (2002) From Elementary Probability to Stochastic Differential Equations with MAPLE®. Berlin, Heidelberg: Springer Berlin Heidelberg (Universitext). doi: 10.1007/978-3-642-56144-3.

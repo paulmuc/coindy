@@ -26,6 +26,8 @@ coindy/sde/__pycache__/sde_classes.cpython-39.pyc
 coindy/sde/__pycache__/sde_demo.cpython-39.pyc
 coindy/sde/tests/__init__.py
 coindy/sde/tests/test_sde_model.py
+coindy/sde/tests/__pycache__/__init__.cpython-39.pyc
+coindy/sde/tests/__pycache__/test_sde_model.cpython-39-pytest-7.1.2.pyc
 coindy/utils/__init__.py
 coindy/utils/console_utils.py
 coindy/utils/ito_utils.py
