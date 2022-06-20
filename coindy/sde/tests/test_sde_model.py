@@ -4,17 +4,17 @@ import pytest
 
 def test_sde_model_algorithms_single():
     with pytest.raises(KeyError):
-        sde_model = sde.SDEModel(2, 2, algorithm='bloup')
+        sde.SDEModel(2, 2, algorithm='bloup')
 
 
 def test_sde_model_algorithms_multiple1():
     with pytest.raises(KeyError):
-        sde_model = sde.SDEModel(2, 2, algorithm=['all', 'it'])
+        sde.SDEModel(2, 2, algorithm=['all', 'it'])
 
 
 def test_sde_model_algorithms_multiple2():
     with pytest.raises(KeyError):
-        sde_model = sde.SDEModel(2, 2, algorithm=['bloup', 'it'])
+        sde.SDEModel(2, 2, algorithm=['bloup', 'it'])
 
 
 def test_sde_model_algorithms_multiple3():

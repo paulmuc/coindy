@@ -9,6 +9,7 @@ from coindy import matrix_utils as mu, ito_utils as it, simulation_utils as su
 
 __all__ = ['SDEModel', 'ModelError']
 
+
 class SDEModel(ProgressWorker):
 
     def __init__(self, n_dof: int, n_rvs: int, algorithm='all'):

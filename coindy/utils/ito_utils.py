@@ -1,5 +1,4 @@
 import sympy as sym
-import numpy as np
 
 
 def ito_sde_form(x, M, C, K, f, B_init):

@@ -1,10 +1,7 @@
 from typing import Union
 
-import sympy as sym
-import matplotlib
 import matplotlib.pyplot as plt
 import sympy as sym
-import sys
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 
 
@@ -74,23 +71,6 @@ def mathTex_to_QPixmap(mathTex, **kwargs):
 
     fig.set_size_inches(tight_fwidth, tight_fheight, forward=True)
 
-    # ---- convert mpl figure to QPixmap ----
-
-    # buf, size = fig.canvas.print_to_buffer()
-    # q_image = QtGui.QImage.rgbSwapped(QtGui.QImage(buf, size[0], size[1],
-    #                                                QtGui.QImage.Format_ARGB32))
-    # q_pixmap = QtGui.QPixmap(q_image)
     plt.show()
-    # app = QtWidgets.QApplication(sys.argv)
-    #
-    # window = QtWidgets.QMainWindow()
-    #
-    # label = QtWidgets.QLabel()
-    # label.setPixmap(q_pixmap)
-    #
-    # window.setCentralWidget(label)
-    # window.show()
-    # window.setWindowTitle('The process will continue when window is closed')
-    #
-    # app.exec_()
+
 
