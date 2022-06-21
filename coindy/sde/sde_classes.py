@@ -257,13 +257,13 @@ class SDESimulator(ProgressWorker):
         self._algorithms = None
         self.sde_model = sde_model
         self.computing_map = {'em':
-                                  {'function': su.euler_maruyama_iteration, 'failed_flag': True,
+                                  {'function': _euler_maruyama_iteration, 'failed_flag': True,
                                    'compute_flag': False},
                               'mi':
-                                  {'function': su.milstein_iteration, 'failed_flag': True,
+                                  {'function': _milstein_iteration, 'failed_flag': True,
                                    'compute_flag': False},
                               'it':
-                                  {'function': su.ito_taylor_iteration, 'failed_flag': True,
+                                  {'function': _ito_taylor_iteration, 'failed_flag': True,
                                    'compute_flag': False}}
         self._results = []
         self.time = time
@@ -388,3 +388,112 @@ class SDESimulator(ProgressWorker):
 
 class ModelError(Exception):
     pass
+
+
+# Private functions
+def _euler_maruyama_iteration(terms: dict, X, dt: float, t: float, n_dof: int, sub_dW):
+    """ Performs an Euler-Maruyama update
+
+    This function can be used in a recursive manner to compute an update of the It\u014d-Taylor terms contained in
+    terms using the Euler-Maruyama update rule
+
+    :param terms: Dictionary containing the SDE terms
+    :param X: Response matrix
+    :param dt: Sampling period
+    :param t: Total time in seconds
+    :param n_dof: Number of degrees of freedom
+    :param sub_dW: Wiener increments
+    :return: Updated X matrix
+    """
+    dW0 = sub_dW[0, :].transpose()
+
+    # Handle exception for overflow
+    if any(np.isnan(X)) or any(np.isinf(X)):
+        return Exception('Nan or Inf encountered')
+    else:
+        try:
+            a_eval = terms['a'](*X, t)
+            B_eval = terms['B'](*X, t)
+
+            return (X + a_eval * dt + np.matmul(B_eval, dW0)).reshape(2 * n_dof, )  # Euler-Maruyama
+        except Exception or Warning as error:
+            return error
+
+
+def _milstein_iteration(terms: dict, X, dt: float, t: float, n_dof: int, sub_dW):
+    """ Performs a Milstein update
+
+    This function can be used in a recursive manner to compute an update of the It\u014d-Taylor terms contained in
+    terms using the Milstein update rule
+
+    :param terms: Dictionary containing the SDE terms
+    :param X: Response matrix
+    :param dt: Sampling period
+    :param t: Total time in seconds
+    :param n_dof: Number of degrees of freedom
+    :param sub_dW: Wiener increments
+    :return: Updated X matrix
+    """
+    dW0 = sub_dW[0, :].transpose()
+    dW2_dt = dW0 ** 2 - dt
+
+    # Handle exception for overflow
+    if any(np.isnan(X)) or any(np.isinf(X)):
+        return Exception('Nan or Inf encountered')
+    else:
+        try:
+            a_eval = terms['a'](*X, t)
+            B_eval = terms['B'](*X, t)
+
+            # Kolmogorov terms
+            Ljb_eval = terms['Ljb'](*X, t)
+
+            return (X + a_eval * dt + np.matmul(B_eval, dW0)
+                    + np.matmul(0.5 * Ljb_eval, dW2_dt)).reshape(2 * n_dof, )  # Milstein 1.0
+        except Exception or Warning as error:
+            return error
+
+
+def _ito_taylor_iteration(terms, X, dt, t, n_dof, sub_dW):
+    """ Performs an It\u014d-Taylor 1.5 update
+
+    This function can be used in a recursive manner to compute an update of the It\u014d-Taylor terms contained in
+    terms using the It\u014d-Taylor 1.5 update rule
+
+    :param terms: Dictionary containing the SDE terms
+    :param X: Response matrix
+    :param dt: Sampling period
+    :param t: Total time in seconds
+    :param n_dof: Number of degrees of freedom
+    :param sub_dW: Wiener increments
+    :return: Updated X matrix
+    """
+    dW0 = sub_dW[0, :].transpose()
+    dZ = sub_dW[1, :].transpose()
+    dW2_dt = dW0 ** 2 - dt
+    dWdt_dz = dW0 * dt - dZ
+    dW2_dtdW = dW0 ** 2 - dt * dW0
+
+    # Handle exception for overflow
+    if any(np.isnan(X)) or any(np.isinf(X)):
+        return Exception('Nan or Inf encountered')
+    else:
+        try:
+            a_eval = terms['a'](*X, t)
+            B_eval = terms['B'](*X, t)
+
+            # Kolmogorov terms
+            L0a_eval = terms['L0a'](*X, t).reshape(2 * n_dof, )
+            L0b_eval = terms['L0b'](*X, t).transpose()
+            Lja_eval = terms['Lja'](*X, t)
+            Ljb_eval = terms['Ljb'](*X, t)
+            L1L1b_eval = terms['L1L1b'](*X, t)
+
+            return (X + a_eval * dt + np.matmul(B_eval, dW0)
+                    + np.matmul(Lja_eval, dZ)
+                    + 0.5 * L0a_eval * dt ** 2
+                    + np.matmul(0.5 * Ljb_eval, dW2_dt)
+                    + np.matmul(L0b_eval, dWdt_dz)
+                    + 1 / 6 * np.matmul(L1L1b_eval, dW2_dtdW)).reshape(2 * n_dof, )  # Ito-Taylor 1.5
+        except Exception or Warning as error:
+            return error

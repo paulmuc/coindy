@@ -141,14 +141,14 @@ def LJ_total(X, B, x):
     n_dof = len(x)
     n_rvs = B.shape[1]
     x_dim = X.shape[1]
-    lj = sym.zeros(n_dof, n_rvs)
+    Lj = sym.zeros(n_dof, n_rvs)
     for i in range(0, n_rvs):
         if x_dim == 1:
             vector = X
         else:
             vector = X[:, i]
-        lj[:, i] = LJ(vector, B, x, i)
-    return lj
+        Lj[:, i] = LJ(vector, B, x, i)
+    return Lj
 
 
 def L1L1_total(X, x):
