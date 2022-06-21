@@ -1,4 +1,4 @@
-from .utils import ito_utils, matrix_utils, simulation_utils, console_utils
+from .utils import ito_utils, matrix_utils, simulation_utils, console_utils, display_matrix
 
 from .base_classes import ProgressWorker
 
@@ -14,4 +14,7 @@ __all__ = [
     'ProgressWorker', 'SDEModel',
 
     # Scripts
-    'sde_demo']
+    'sde_demo',
+
+    # Utilities
+    'display_matrix']
