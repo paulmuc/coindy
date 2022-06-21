@@ -35,7 +35,7 @@ $$\mathcal{L}^1(\cdot) = \sum_{i=1}^p \sum_{j=1}^n B_{ij} \frac{\partial (\cdot)
 In `coindy.ito_utils`:
 - `a, B = ito_sde_form(M, C, K, f, x, B_init)` - Translates a system from a mechanical formulation to an Itō SDE formulation. The terms `a` and `B` represent the drift vector and diffusion matrix respectively where $d\mathbf{x} = \mathbf{a}*dt + \mathbf{B} * d\mathbf{w}_t$. These results would be similar to the ones used by querying `SDEModel.sde_terms['a']` and `SDEModel.sde_terms['B']`.
 - `L0(X, a, B, x, t)` - Compute the result of applying the first Kolmogorov operator to vector `X` with `a` and `B` resulting from `ito_sde_form`.
-- `LJ(X, B, x, j)` - Compute the result of applying the second Kolmogorov operator to `X` where `X` can be a vector or a matrix at index `j`. This computes $$\mathcal{L}^1_j(\cdot) = \sum_{i=1}^p B_{ij} \frac{\partial (\cdot)}{\partial y_i} \mathrm{d}w_j$$ where $$\mathcal{L}^1_j(\cdot)$$ is the j<sup>th</sup> vector of $$\mathcal{L}^1(\cdot)$$.
+- `LJ(X, B, x, j)` - Compute the result of applying the second Kolmogorov operator to `X` where `X` can be a vector or a matrix at index `j`. This computes $\mathcal{L}^1_j(\cdot) = \sum_{i=1}^p B_{ij} \frac{\partial (\cdot)}{\partial y_i} \mathrm{d}w_j$ where $\mathcal{L}^1_j(\cdot)$ is the j<sup>th</sup> vector of $\mathcal{L}^1(\cdot)$.
 
 In `coindy.simulation_utils`:
 - `dW = generate_wiener_increment(time_step, time_stop, n_dof)` - Utility that generates an n_dof * (time_stop/time_step) matrix of Wiener increments
