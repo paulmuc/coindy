@@ -6,11 +6,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "coindy"
-version = "0.0.4"
+version = "0.0.0"
 description = "A library for computing simulations of stochastic differential equations in symbolic form"
 readme = "README.md"
 authors = [{ name = "Paul Mucchielli", email = "paulmucc@gmail.com" }]
-license = { file = "LICENSE"}
+license = {text="GPL-3.0-only"}
 classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
