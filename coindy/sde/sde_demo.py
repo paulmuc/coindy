@@ -145,7 +145,11 @@ def example():
 
     max_num_points = 100
     # Creating the Animation object
-    animation.FuncAnimation(
+    anim = animation.FuncAnimation(
         fig, update_lines, frames=Nt, fargs=(data, traces, max_num_points), interval=T, blit=True, repeat=True)
 
     plt.show()
+
+
+if __name__ == '__main__':
+    example()

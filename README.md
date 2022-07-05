@@ -24,7 +24,7 @@ First Kolmogorov operator:
 $$\mathcal{L}^0(\cdot) = \left(\frac{\partial (\cdot)}{\partial t} + \sum_{i=1}^{p} a_i \frac{\partial (\cdot)}{\partial y_{i}} + \frac{1}{2} \sum_{i=1}^{p} \sum_{j=1}^p \sum_{k=1}^n B_{ij} B_{kj} \frac{\partial^2 (\cdot)}{\partial y_i \partial y_j}\right)$$
 
 Second Kolmogorov operator:
-$$\mathcal{L}^1(\cdot) = \sum_{i=1}^p \sum_{j=1}^n B_{ij} \frac{\partial (\cdot)}{\partial y_i} \mathrm{d}w_j$$
+$$\mathcal{L}^1(\cdot) = \left[\mathcal{L}^1_1(\cdot), \ldots, \mathcal{L}^1_n(\cdot)\right] \qquad \mathcal{L}^1_j(\cdot) = \sum_{i=1}^p  B_{ij} \frac{\partial (\cdot)}{\partial y_i}$$
 
 ## Classes
 
