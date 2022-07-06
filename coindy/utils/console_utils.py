@@ -1,8 +1,11 @@
 from typing import Union
 
+import matplotlib
 import matplotlib.pyplot as plt
 import sympy as sym
 from matplotlib.backends.backend_agg import FigureCanvasAgg
+
+matplotlib.use('Qt5Agg')
 
 
 def progress_bar(progress: float, total: float):
@@ -34,7 +37,7 @@ def display_matrix(matrix: Union[list[str], list[list[str]], sym.Matrix], name='
 def convert_to_latex(text, name='', color='white'):
     if isinstance(text, sym.Basic):
         latex_string = sym.latex(text)
-        latex_string = '$' + name + '=' + latex_string + '$'
+        latex_string = '$' + name + ' = ' + latex_string + '$'
     else:
         latex_string = text
     mathTex_to_QPixmap(latex_string, fontsize=16, color=color)
