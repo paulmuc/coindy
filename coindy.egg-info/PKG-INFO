@@ -27,11 +27,11 @@ Build Status: Passed
 
 ## Installation
 
-CoinDy is not live yet, it is available on TestPyPI though
+CoinDy can be installed by using:
 
-    pip install -i https://test.pypi.org/pypi/ --extra-index-url https://pypi.org/simple coindy
+    pip install coindy
 
-It is for now supported on Python 3.9 and over.
+It is for now supported on Python 3.9 and later.
 
 ## Theory
 Itō SDE:

@@ -18,7 +18,7 @@ Itō SDE:
 $$\mathbf{g} = \mathbf{a}dt + \mathbf{B}\mathrm{d}\mathbf{w}_t$$
 
 Itō's Lemma:
-$$\mathrm{d}\mathbf{g} = \mathcal{L}^0(g)\mathrm{d}t  + \mathcal{L}^1(g)$$
+$$\mathrm{d}\mathbf{g} = \mathcal{L}^0(g)\mathrm{d}t  + \mathcal{L}^1(g) \mathrm{d}\mathbf{w}$$
 
 First Kolmogorov operator:
 $$\mathcal{L}^0(\cdot) = \left(\frac{\partial (\cdot)}{\partial t} + \sum_{i=1}^{p} a_i \frac{\partial (\cdot)}{\partial y_{i}} + \frac{1}{2} \sum_{i=1}^{p} \sum_{j=1}^p \sum_{k=1}^n B_{ij} B_{kj} \frac{\partial^2 (\cdot)}{\partial y_i \partial y_j}\right)$$
