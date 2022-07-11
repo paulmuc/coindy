@@ -72,7 +72,7 @@ sde_model.equations = equations
 sde_model.compute_ito_sde_terms()
     
 # Print drift term
-display_matrix(sde_model.sde_terms['a'])
+display_matrix(sde_model.sde_terms['a'], 'a')
 
 sde_model.simulate([0.01, 10], constant_map, initial_values)
 ```
